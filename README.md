@@ -1,4 +1,5 @@
 # ProyectoFinalOrganizacionDecomputadores
 
-# Daniel Urbano Viana Polo
-# Juan David Mendiola
+Daniel Urbano Viana Polo
+
+Juan David Mendiola

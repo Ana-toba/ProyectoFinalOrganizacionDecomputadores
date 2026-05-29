@@ -1,0 +1,100 @@
+class Maze {
+    field Array grid;
+    field int rows, cols;
+    field int exitRow, exitCol;
+
+    constructor Maze new() {
+        let rows = 16;
+        let cols = 16;
+        let grid = Array.new(rows * cols);
+        do buildMaze();
+        return this;
+    }
+
+    method void buildMaze() {
+        var int i;
+
+        let i = 0;
+
+        while (i < (rows * cols)) {
+            let grid[i] = 1;
+            let i = i + 1;
+        }
+
+        do open(1,1); do open(1,2); do open(1,3);do open(1,4);do open(1,5);do open(1,6); do open(1,8); do open(1,9); do open(1,10); do open(1,12); do open(1,13);
+
+        do open(2,1); do open(2,4); do open(2,6); do open(2,8); do open(2,10); do open(2,12); do open(2,14);
+
+        do open(3,1); do open(3,3); do open(3,4); do open(3,6); do open(3,7); do open(3,8); do open(3,10); do open(3,11); do open(3,12);
+
+        do open(4,1); do open(4,3); do open(4,7); do open(4,11); do open(4,13);
+
+        do open(5,1); do open(5,2); do open(5,3); do open(5,4); do open(5,5); do open(5,7); do open(5,8); do open(5,9); do open(5,11); do open(5,12); do open(5,13);
+
+        do open(6,2); do open(6,4); do open(6,7); do open(6,9); do open(6,11); do open(6,13);
+
+        do open(7,1); do open(7,2); do open(7,4); do open(7,5); do open(7,6); do open(7,7); do open(7,8); do open(7,9); do open(7,10); do open(7,11); do open(7,12); do open(7,13);
+
+        do open(8,1); do open(8,4); do open(8,7); do open(8,10); do open(8,12); do open(8,13);
+
+        do open(9,1); do open(9,2); do open(9,3); do open(9,4); do open(9,6); do open(9,7); do open(9,8); do open(9,10); do open(9,12);
+
+        do open(10,2); do open(10,4); do open(10,6); do open(10,8); do open(10,10); do open(10,11); do open(10,12); do open(10,14);
+
+        do open(11,1); do open(11,2); do open(11,4); do open(11,6); do open(11,8); do open(11,9); do open(11,10); do open(11,11); do open(11,12); do open(11,14);
+
+        do open(12,1); do open(12,4); do open(12,5); do open(12,6); do open(12,8); do open(12,11); do open(12,14);
+
+        do open(13,1); do open(13,2); do open(13,3); do open(13,4); do open(13,6); do open(13,7); do open(13,8); do open(13,10); do open(13,11); do open(13,12); do open(13,13); do open(13,14);
+
+        do open(14,1); do open(14,3); do open(14,6); do open(14,9); do open(14,10); do open(14,11); do open(14,12); do open(14,13); do open(14,14);
+
+        do setCell(1, 14, 2);
+
+        let exitRow = 1;
+        let exitCol = 14;
+
+        return;
+    }
+
+    method void open(int row, int col) {
+        do setCell(row, col, 0);
+        return;
+    }
+
+    method void setCell(int row, int col, int val) {
+        if ((row > -1) & (row < rows) & (col > -1) & (col < cols)) {
+            let grid[(row * cols) + col] = val;
+        }
+        return;
+    }
+
+    method int getCell(int row, int col) {
+        if ((row < 0) | (row > (rows - 1))) { return 1; }
+        if ((col < 0) | (col > (cols - 1))) { return 1; }
+
+        return grid[(row * cols) + col];
+    }
+
+    method boolean isWall(int row, int col) {
+        if ((row < 0) | (row > (rows - 1))) { return true; }
+        if ((col < 0) | (col > (cols - 1))) { return true; }
+
+        return grid[(row * cols) + col] = 1;
+    }
+
+    method boolean isExit(int row, int col) {
+        return (row = exitRow) & (col = exitCol);
+    }
+
+    method int getRows() { return rows; }
+    method int getCols() { return cols; }
+    method int getExitRow() { return exitRow; }
+    method int getExitCol() { return exitCol; }
+
+    method void dispose() {
+        do grid.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

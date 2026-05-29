@@ -1,0 +1,22 @@
+class Main {
+    function void main() {
+        var Game game;
+        var boolean again;
+
+        /*
+         * Se crea un solo Game para todo el programa.
+         * Antes se hacia Game.new() en cada reinicio y, aunque se llamara
+         * dispose(), el emulador Hack puede quedarse sin memoria despues
+         * de varias partidas. Asi evitamos el ERR6 por reinicios repetidos.
+         */
+        let game = Game.new();
+        let again = true;
+
+        while (again) {
+            let again = game.run();
+        }
+
+        do game.dispose();
+        return;
+    }
+}

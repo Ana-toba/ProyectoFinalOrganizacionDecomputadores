@@ -1,0 +1,160 @@
+class Enemy {
+    field int row, col;
+    field Maze maze;
+    field Array queue;
+    field Array visited;
+    field Array firstMove;
+
+    constructor Enemy new(int startRow, int startCol, Maze theMaze) {
+        let row = startRow;
+        let col = startCol;
+        let maze = theMaze;
+        let queue = Array.new(256);
+        let visited = Array.new(256);
+        let firstMove = Array.new(256);
+        return this;
+    }
+
+    /**
+     * BFS liviano: calcula el primer paso del camino mas corto hacia el jugador.
+     * Los arreglos se crean una sola vez en el constructor para no consumir RAM
+     * en cada movimiento.
+     */
+    method void chase(int targetRow, int targetCol, int turn) {
+        var int dir;
+
+        /*
+         * Persecucion obligatoria:
+         * 1. Primero usa BFS para escoger el primer paso del camino mas corto.
+         * 2. Si por algun cambio de mapa no existe ruta, no se mueve al azar:
+         *    escoge el movimiento valido que mas lo acerque al jugador.
+         */
+        let dir = bfsDirection(targetRow, targetCol);
+
+        if (dir = 1) { let row = row - 1; return; }
+        if (dir = 2) { let row = row + 1; return; }
+        if (dir = 3) { let col = col - 1; return; }
+        if (dir = 4) { let col = col + 1; return; }
+
+        do moveCloser(targetRow, targetCol);
+        return;
+    }
+
+    method int bfsDirection(int targetRow, int targetCol) {
+        var int i, head, tail;
+        var int current, cr, cc, dir;
+
+        let i = 0;
+        while (i < 256) {
+            let visited[i] = 0;
+            let firstMove[i] = 0;
+            let i = i + 1;
+        }
+
+        let head = 0;
+        let tail = 0;
+        let current = index(row, col);
+        let queue[tail] = current;
+        let visited[current] = 1;
+        let firstMove[current] = 0;
+        let tail = tail + 1;
+
+        while (head < tail) {
+            let current = queue[head];
+            let head = head + 1;
+
+            let cr = current / 16;
+            let cc = current - (cr * 16);
+
+            if ((cr = targetRow) & (cc = targetCol)) {
+                return firstMove[current];
+            }
+
+            let dir = firstMove[current];
+            let tail = addCell(cr - 1, cc, 1, dir, tail);
+            let tail = addCell(cr + 1, cc, 2, dir, tail);
+            let tail = addCell(cr, cc - 1, 3, dir, tail);
+            let tail = addCell(cr, cc + 1, 4, dir, tail);
+        }
+
+        return 0;
+    }
+
+    method int addCell(int r, int c, int newDir, int oldDir, int tail) {
+        var int idx, dir;
+        if (maze.isWall(r, c)) { return tail; }
+
+        let idx = index(r, c);
+        if (visited[idx] = 1) { return tail; }
+
+        let visited[idx] = 1;
+        if (oldDir = 0) {
+            let dir = newDir;
+        } else {
+            let dir = oldDir;
+        }
+        let firstMove[idx] = dir;
+        let queue[tail] = idx;
+        return tail + 1;
+    }
+
+    method int index(int r, int c) {
+        return (r * 16) + c;
+    }
+
+    method void moveCloser(int targetRow, int targetCol) {
+        var int bestDir, bestDist, d;
+
+        let bestDir = 0;
+        let bestDist = 1000;
+
+        if (~(maze.isWall(row - 1, col))) {
+            let d = distance(row - 1, col, targetRow, targetCol);
+            if (d < bestDist) { let bestDist = d; let bestDir = 1; }
+        }
+        if (~(maze.isWall(row + 1, col))) {
+            let d = distance(row + 1, col, targetRow, targetCol);
+            if (d < bestDist) { let bestDist = d; let bestDir = 2; }
+        }
+        if (~(maze.isWall(row, col - 1))) {
+            let d = distance(row, col - 1, targetRow, targetCol);
+            if (d < bestDist) { let bestDist = d; let bestDir = 3; }
+        }
+        if (~(maze.isWall(row, col + 1))) {
+            let d = distance(row, col + 1, targetRow, targetCol);
+            if (d < bestDist) { let bestDist = d; let bestDir = 4; }
+        }
+
+        if (bestDir = 1) { let row = row - 1; return; }
+        if (bestDir = 2) { let row = row + 1; return; }
+        if (bestDir = 3) { let col = col - 1; return; }
+        if (bestDir = 4) { let col = col + 1; return; }
+        return;
+    }
+
+    method int distance(int r1, int c1, int r2, int c2) {
+        return abs(r1 - r2) + abs(c1 - c2);
+    }
+
+    method int abs(int x) {
+        if (x < 0) { return -x; }
+        return x;
+    }
+
+    method void setPosition(int newRow, int newCol) {
+        let row = newRow;
+        let col = newCol;
+        return;
+    }
+
+    method int getRow() { return row; }
+    method int getCol() { return col; }
+
+    method void dispose() {
+        do queue.dispose();
+        do visited.dispose();
+        do firstMove.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

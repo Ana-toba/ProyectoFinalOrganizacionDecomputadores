@@ -1,0 +1,602 @@
+function Enemy.new 0
+    push constant 6
+    call Memory.alloc 1
+    pop pointer 0
+    push argument 0
+    pop this 0
+    push argument 1
+    pop this 1
+    push argument 2
+    pop this 2
+    push constant 256
+    call Array.new 1
+    pop this 3
+    push constant 256
+    call Array.new 1
+    pop this 4
+    push constant 256
+    call Array.new 1
+    pop this 5
+    push pointer 0
+    return
+function Enemy.chase 1
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    push argument 1
+    push argument 2
+    call Enemy.bfsDirection 3
+    pop local 0
+    push local 0
+    push constant 1
+    eq
+    not
+    if-goto Enemy_1
+    push this 0
+    push constant 1
+    sub
+    pop this 0
+    push constant 0
+    return
+    goto Enemy_0
+label Enemy_1
+label Enemy_0
+    push local 0
+    push constant 2
+    eq
+    not
+    if-goto Enemy_3
+    push this 0
+    push constant 1
+    add
+    pop this 0
+    push constant 0
+    return
+    goto Enemy_2
+label Enemy_3
+label Enemy_2
+    push local 0
+    push constant 3
+    eq
+    not
+    if-goto Enemy_5
+    push this 1
+    push constant 1
+    sub
+    pop this 1
+    push constant 0
+    return
+    goto Enemy_4
+label Enemy_5
+label Enemy_4
+    push local 0
+    push constant 4
+    eq
+    not
+    if-goto Enemy_7
+    push this 1
+    push constant 1
+    add
+    pop this 1
+    push constant 0
+    return
+    goto Enemy_6
+label Enemy_7
+label Enemy_6
+    push pointer 0
+    push argument 1
+    push argument 2
+    call Enemy.moveCloser 3
+    pop temp 0
+    push constant 0
+    return
+function Enemy.bfsDirection 7
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Enemy_8
+    push local 0
+    push constant 256
+    lt
+    not
+    if-goto Enemy_9
+    push local 0
+    push this 4
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push this 5
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Enemy_8
+label Enemy_9
+    push constant 0
+    pop local 1
+    push constant 0
+    pop local 2
+    push pointer 0
+    push this 0
+    push this 1
+    call Enemy.index 3
+    pop local 3
+    push local 2
+    push this 3
+    add
+    push local 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 3
+    push this 4
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 3
+    push this 5
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 2
+    push constant 1
+    add
+    pop local 2
+label Enemy_10
+    push local 1
+    push local 2
+    lt
+    not
+    if-goto Enemy_11
+    push local 1
+    push this 3
+    add
+    pop pointer 1
+    push that 0
+    pop local 3
+    push local 1
+    push constant 1
+    add
+    pop local 1
+    push local 3
+    push constant 16
+    call Math.divide 2
+    pop local 4
+    push local 3
+    push local 4
+    push constant 16
+    call Math.multiply 2
+    sub
+    pop local 5
+    push local 4
+    push argument 1
+    eq
+    push local 5
+    push argument 2
+    eq
+    and
+    not
+    if-goto Enemy_13
+    push local 3
+    push this 5
+    add
+    pop pointer 1
+    push that 0
+    return
+    goto Enemy_12
+label Enemy_13
+label Enemy_12
+    push local 3
+    push this 5
+    add
+    pop pointer 1
+    push that 0
+    pop local 6
+    push pointer 0
+    push local 4
+    push constant 1
+    sub
+    push local 5
+    push constant 1
+    push local 6
+    push local 2
+    call Enemy.addCell 6
+    pop local 2
+    push pointer 0
+    push local 4
+    push constant 1
+    add
+    push local 5
+    push constant 2
+    push local 6
+    push local 2
+    call Enemy.addCell 6
+    pop local 2
+    push pointer 0
+    push local 4
+    push local 5
+    push constant 1
+    sub
+    push constant 3
+    push local 6
+    push local 2
+    call Enemy.addCell 6
+    pop local 2
+    push pointer 0
+    push local 4
+    push local 5
+    push constant 1
+    add
+    push constant 4
+    push local 6
+    push local 2
+    call Enemy.addCell 6
+    pop local 2
+    goto Enemy_10
+label Enemy_11
+    push constant 0
+    return
+function Enemy.addCell 2
+    push argument 0
+    pop pointer 0
+    push this 2
+    push argument 1
+    push argument 2
+    call Maze.isWall 3
+    not
+    if-goto Enemy_15
+    push argument 5
+    return
+    goto Enemy_14
+label Enemy_15
+label Enemy_14
+    push pointer 0
+    push argument 1
+    push argument 2
+    call Enemy.index 3
+    pop local 0
+    push local 0
+    push this 4
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    eq
+    not
+    if-goto Enemy_17
+    push argument 5
+    return
+    goto Enemy_16
+label Enemy_17
+label Enemy_16
+    push local 0
+    push this 4
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push argument 4
+    push constant 0
+    eq
+    not
+    if-goto Enemy_19
+    push argument 3
+    pop local 1
+    goto Enemy_18
+label Enemy_19
+    push argument 4
+    pop local 1
+label Enemy_18
+    push local 0
+    push this 5
+    add
+    push local 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push argument 5
+    push this 3
+    add
+    push local 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push argument 5
+    push constant 1
+    add
+    return
+function Enemy.index 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 16
+    call Math.multiply 2
+    push argument 2
+    add
+    return
+function Enemy.moveCloser 3
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+    push constant 1000
+    pop local 1
+    push this 2
+    push this 0
+    push constant 1
+    sub
+    push this 1
+    call Maze.isWall 3
+    not
+    not
+    if-goto Enemy_21
+    push pointer 0
+    push this 0
+    push constant 1
+    sub
+    push this 1
+    push argument 1
+    push argument 2
+    call Enemy.distance 5
+    pop local 2
+    push local 2
+    push local 1
+    lt
+    not
+    if-goto Enemy_23
+    push local 2
+    pop local 1
+    push constant 1
+    pop local 0
+    goto Enemy_22
+label Enemy_23
+label Enemy_22
+    goto Enemy_20
+label Enemy_21
+label Enemy_20
+    push this 2
+    push this 0
+    push constant 1
+    add
+    push this 1
+    call Maze.isWall 3
+    not
+    not
+    if-goto Enemy_25
+    push pointer 0
+    push this 0
+    push constant 1
+    add
+    push this 1
+    push argument 1
+    push argument 2
+    call Enemy.distance 5
+    pop local 2
+    push local 2
+    push local 1
+    lt
+    not
+    if-goto Enemy_27
+    push local 2
+    pop local 1
+    push constant 2
+    pop local 0
+    goto Enemy_26
+label Enemy_27
+label Enemy_26
+    goto Enemy_24
+label Enemy_25
+label Enemy_24
+    push this 2
+    push this 0
+    push this 1
+    push constant 1
+    sub
+    call Maze.isWall 3
+    not
+    not
+    if-goto Enemy_29
+    push pointer 0
+    push this 0
+    push this 1
+    push constant 1
+    sub
+    push argument 1
+    push argument 2
+    call Enemy.distance 5
+    pop local 2
+    push local 2
+    push local 1
+    lt
+    not
+    if-goto Enemy_31
+    push local 2
+    pop local 1
+    push constant 3
+    pop local 0
+    goto Enemy_30
+label Enemy_31
+label Enemy_30
+    goto Enemy_28
+label Enemy_29
+label Enemy_28
+    push this 2
+    push this 0
+    push this 1
+    push constant 1
+    add
+    call Maze.isWall 3
+    not
+    not
+    if-goto Enemy_33
+    push pointer 0
+    push this 0
+    push this 1
+    push constant 1
+    add
+    push argument 1
+    push argument 2
+    call Enemy.distance 5
+    pop local 2
+    push local 2
+    push local 1
+    lt
+    not
+    if-goto Enemy_35
+    push local 2
+    pop local 1
+    push constant 4
+    pop local 0
+    goto Enemy_34
+label Enemy_35
+label Enemy_34
+    goto Enemy_32
+label Enemy_33
+label Enemy_32
+    push local 0
+    push constant 1
+    eq
+    not
+    if-goto Enemy_37
+    push this 0
+    push constant 1
+    sub
+    pop this 0
+    push constant 0
+    return
+    goto Enemy_36
+label Enemy_37
+label Enemy_36
+    push local 0
+    push constant 2
+    eq
+    not
+    if-goto Enemy_39
+    push this 0
+    push constant 1
+    add
+    pop this 0
+    push constant 0
+    return
+    goto Enemy_38
+label Enemy_39
+label Enemy_38
+    push local 0
+    push constant 3
+    eq
+    not
+    if-goto Enemy_41
+    push this 1
+    push constant 1
+    sub
+    pop this 1
+    push constant 0
+    return
+    goto Enemy_40
+label Enemy_41
+label Enemy_40
+    push local 0
+    push constant 4
+    eq
+    not
+    if-goto Enemy_43
+    push this 1
+    push constant 1
+    add
+    pop this 1
+    push constant 0
+    return
+    goto Enemy_42
+label Enemy_43
+label Enemy_42
+    push constant 0
+    return
+function Enemy.distance 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    push argument 1
+    push argument 3
+    sub
+    call Enemy.abs 2
+    push pointer 0
+    push argument 2
+    push argument 4
+    sub
+    call Enemy.abs 2
+    add
+    return
+function Enemy.abs 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    lt
+    not
+    if-goto Enemy_45
+    push argument 1
+    neg
+    return
+    goto Enemy_44
+label Enemy_45
+label Enemy_44
+    push argument 1
+    return
+function Enemy.setPosition 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    pop this 0
+    push argument 2
+    pop this 1
+    push constant 0
+    return
+function Enemy.getRow 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    return
+function Enemy.getCol 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    return
+function Enemy.dispose 0
+    push argument 0
+    pop pointer 0
+    push this 3
+    call Array.dispose 1
+    pop temp 0
+    push this 4
+    call Array.dispose 1
+    pop temp 0
+    push this 5
+    call Array.dispose 1
+    pop temp 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return

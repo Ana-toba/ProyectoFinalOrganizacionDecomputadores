@@ -1,0 +1,231 @@
+class Game {
+    field Maze maze;
+    field Player player;
+    field Enemy enemy;
+    field Renderer renderer;
+    field int state;
+    field int enemyTimer, enemyDelay;
+    field int seed;
+    field int enemyStep;
+    field boolean skipMenu;
+
+    constructor Game new() {
+        let maze = Maze.new();
+        let player = Player.new(1, 1, maze);
+        let enemy = Enemy.new(13, 13, maze);
+        let renderer = Renderer.new(maze);
+        let state = 1;
+        let enemyTimer = 0;
+        let enemyDelay = 4;
+        let seed = 1;
+        let enemyStep = 0;
+        let skipMenu = false;
+        return this;
+    }
+
+    method void resetRound() {
+        let state = 1;
+        let enemyTimer = 0;
+        let enemyStep = 0;
+        do player.resetPosition(1, 1);
+        do placeEnemyRandom();
+        return;
+    }
+
+    method boolean run() {
+        var int key;
+        var int pr, pc, er, ec;
+
+        if (~skipMenu) {
+            if (~showStart()) { return false; }
+        }
+
+        let skipMenu = false;
+        do resetRound();
+
+        do renderer.clearScreen();
+        do renderer.drawMaze();
+        do renderer.drawHUD();
+        do renderer.drawPlayer(player.getRow(), player.getCol());
+        do renderer.drawEnemy(enemy.getRow(), enemy.getCol());
+
+        while (state = 1) {
+            let key = Keyboard.keyPressed();
+
+            if (key = 140) { let state = 4; }
+
+            if ((key = 131) | (key = 133) | (key = 130) | (key = 132)) {
+                let pr = player.getRow();
+                let pc = player.getCol();
+
+                if (player.move(key)) {
+                    do renderer.clearCell(pr, pc);
+                    do renderer.drawPlayer(player.getRow(), player.getCol());
+                }
+            } else {
+                do player.resetKey();
+            }
+
+            if ((enemy.getRow() = player.getRow()) & (enemy.getCol() = player.getCol())) {
+                let state = 3;
+            }
+
+            let enemyTimer = enemyTimer + 1;
+
+            if ((enemyTimer > enemyDelay) & (state = 1)) {
+                let enemyTimer = 0;
+                let er = enemy.getRow();
+                let ec = enemy.getCol();
+                let enemyStep = enemyStep + 1;
+
+                do enemy.chase(player.getRow(), player.getCol(), enemyStep);
+
+                do renderer.clearCell(er, ec);
+                do renderer.drawEnemy(enemy.getRow(), enemy.getCol());
+            }
+
+            if (maze.isExit(player.getRow(), player.getCol())) {
+                let state = 2;
+            }
+
+            if ((enemy.getRow() = player.getRow()) & (enemy.getCol() = player.getCol())) {
+                let state = 3;
+            }
+
+            do Sys.wait(50);
+        }
+
+        if (state = 2) {
+            do renderer.drawWinScreen();
+            return waitResult();
+        }
+
+        if (state = 3) {
+            do renderer.drawLoseScreen();
+            return waitResult();
+        }
+
+        while (~(Keyboard.keyPressed() = 0)) { }
+        return true;
+    }
+
+    method boolean showStart() {
+        var int k;
+
+        do renderer.drawStartScreen();
+
+        while (true) {
+            let seed = seed + 1;
+
+            if (seed > 30000) {
+                let seed = 1;
+            }
+
+            let k = Keyboard.keyPressed();
+
+            if ((k = 81) | (k = 113)) {
+                while (~(Keyboard.keyPressed() = 0)) { }
+                return false;
+            }
+
+            if (k = 140) {
+                while (~(Keyboard.keyPressed() = 0)) { }
+                let k = 0;
+            }
+
+            if (~(k = 0)) {
+                while (~(Keyboard.keyPressed() = 0)) { }
+                return true;
+            }
+
+            do Sys.wait(10);
+        }
+
+        return true;
+    }
+
+    method void placeEnemyRandom() {
+        var int option;
+
+        let seed = seed + 53;
+
+        if (seed > 30000) {
+            let seed = 1;
+        }
+
+        let option = seed - ((seed / 24) * 24);
+
+        if (option = 0)  { do enemy.setPosition(13, 13); return; }
+        if (option = 1)  { do enemy.setPosition(14, 14); return; }
+        if (option = 2)  { do enemy.setPosition(14, 13); return; }
+        if (option = 3)  { do enemy.setPosition(13, 14); return; }
+        if (option = 4)  { do enemy.setPosition(12, 14); return; }
+        if (option = 5)  { do enemy.setPosition(11, 14); return; }
+        if (option = 6)  { do enemy.setPosition(10, 14); return; }
+
+        if (option = 7)  { do enemy.setPosition(13, 11); return; }
+        if (option = 8)  { do enemy.setPosition(13, 8); return; }
+        if (option = 9)  { do enemy.setPosition(12, 11); return; }
+        if (option = 10) { do enemy.setPosition(11, 12); return; }
+        if (option = 11) { do enemy.setPosition(10, 12); return; }
+
+        if (option = 12) { do enemy.setPosition(9, 12); return; }
+        if (option = 13) { do enemy.setPosition(8, 13); return; }
+        if (option = 14) { do enemy.setPosition(7, 13); return; }
+        if (option = 15) { do enemy.setPosition(7, 11); return; }
+        if (option = 16) { do enemy.setPosition(5, 13); return; }
+        if (option = 17) { do enemy.setPosition(4, 13); return; }
+        if (option = 18) { do enemy.setPosition(3, 12); return; }
+
+        if (option = 19) { do enemy.setPosition(11, 2); return; }
+        if (option = 20) { do enemy.setPosition(13, 1); return; }
+        if (option = 21) { do enemy.setPosition(14, 1); return; }
+        if (option = 22) { do enemy.setPosition(10, 2); return; }
+        if (option = 23) { do enemy.setPosition(9, 4); return; }
+
+        do enemy.setPosition(13, 13);
+        return;
+    }
+
+    method boolean waitResult() {
+        var int k;
+
+        while (~(Keyboard.keyPressed() = 0)) { }
+
+        let k = 0;
+
+        while (true) {
+            let k = Keyboard.keyPressed();
+
+            if ((k = 82) | (k = 114)) {
+                while (~(Keyboard.keyPressed() = 0)) { }
+                let skipMenu = true;
+                return true;
+            }
+
+            if (k = 140) {
+                while (~(Keyboard.keyPressed() = 0)) { }
+                let skipMenu = false;
+                return true;
+            }
+
+            if ((k = 81) | (k = 113)) {
+                while (~(Keyboard.keyPressed() = 0)) { }
+                return false;
+            }
+
+            do Sys.wait(30);
+        }
+
+        return false;
+    }
+
+    method void dispose() {
+        do maze.dispose();
+        do player.dispose();
+        do enemy.dispose();
+        do renderer.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

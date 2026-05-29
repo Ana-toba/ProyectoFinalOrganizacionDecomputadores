@@ -1,0 +1,49 @@
+class Player {
+    field int row, col;
+    field Maze maze;
+    field int lastKey;
+
+    constructor Player new(int startRow, int startCol, Maze theMaze) {
+        let row = startRow;
+        let col = startCol;
+        let maze = theMaze;
+        let lastKey = 0;
+        return this;
+    }
+
+    method boolean move(int dir) {
+        var int newRow, newCol;
+        if (dir = lastKey) { return false; }
+        let lastKey = dir;
+        let newRow = row;
+        let newCol = col;
+        if (dir = 131) { let newRow = row - 1; }
+        if (dir = 133) { let newRow = row + 1; }
+        if (dir = 130) { let newCol = col - 1; }
+        if (dir = 132) { let newCol = col + 1; }
+        if (maze.isWall(newRow, newCol)) { return false; }
+        let row = newRow;
+        let col = newCol;
+        return true;
+    }
+
+    method void resetKey() {
+        let lastKey = 0;
+        return;
+    }
+
+    method void resetPosition(int newRow, int newCol) {
+        let row = newRow;
+        let col = newCol;
+        let lastKey = 0;
+        return;
+    }
+
+    method int getRow() { return row; }
+    method int getCol() { return col; }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}
